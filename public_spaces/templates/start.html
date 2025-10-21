@@ -1,9 +1,204 @@
-<!DOCTYPE html>
-<html>
+{% load static %}
+<html lang="ru">
 <head>
-    <title>Index Page</title>
+    <meta charset="UTF-8">
+    <title>Карта Москвы</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            font-family: sans-serif;
+        }
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+        #sidebar {
+            width: 0;
+            transition: width 0.3s ease;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+            padding: 20px;
+        }
+        #sidebar.open { width: 380px; }
+        #sidebar img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        #closeSidebar {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            float: right;
+        }
+        #sidebar h2 { margin-top: 0; }
+        .extra-block {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .extra-block h3 {
+            margin-bottom: 8px;
+            color: #444;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 8px;
+        }
+        .gallery img {
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
-    <h1>Здесь будет карта</h1>
+<div id="map"></div>
+
+<div id="sidebar">
+    <button id="closeSidebar">&times;</button>
+    <h2 id="placeTitle">Название места</h2>
+    <img id="placeImage" src="" alt="Фото места">
+    <p id="placeDescription"></p>
+
+    <!-- Контейнер для дополнительных описаний -->
+    <div id="extraInfo"></div>
+</div>
+
+<script>
+    // Инициализация карты
+    var map = L.map('map').setView([55.7558, 37.6173], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Данные мест
+    const places = [
+        {
+            name: "Старый Арбат",
+            coords: [55.7520, 37.5950],
+            image: "{% static 'images/stariy_arbat.png' %}",
+            description: "Одна из старейших улиц Москвы, известная своими артистами, магазинами и атмосферой старого города.",
+            gallery: [
+                "{% static 'images/stariy_arbat_1.png' %}",
+                "{% static 'images/stariy_arbat_2.png' %}",
+                "{% static 'images/stariy_arbat_3.png' %}"
+            ],
+            extras: [
+                {
+                    title: "История",
+                    text: "Арбат возник ещё в XV веке как дорога на Смоленск. Сегодня это одна из самых популярных пешеходных улиц Москвы."
+                },
+                {
+                    title: "Что посмотреть",
+                    text: "На Арбате расположены музеи, памятники, театры и множество уютных кафе. Особое внимание заслуживает дом Пушкина."
+                }
+            ]
+        },
+        {
+            name: "Улица Кузнецкий Мост",
+            coords: [55.7603, 37.6216],
+            image: "{% static 'images/kuznetskiy_most.png' %}",
+            description: "Историческая улица в центре Москвы, где сочетаются архитектура XIX века и современные бутики.",
+            gallery: [
+                "{% static 'images/kuznetskiy_most_1.png' %}",
+                "{% static 'images/kuznetskiy_most_2.png' %}",
+                "{% static 'images/kuznetskiy_most_3.png' %}"
+            ],
+            extras: [
+                {
+                    title: "Архитектура",
+                    text: "На Кузнецком мосту можно увидеть здания в стиле классицизма, модерна и конструктивизма, отражающие разные эпохи Москвы."
+                },
+                {
+                    title: "Интересный факт",
+                    text: "Название улицы происходит от моста через реку Неглинку, ныне заключённую в подземную трубу."
+                }
+            ]
+        }
+    ];
+
+    // DOM элементы
+    const sidebar = document.getElementById('sidebar');
+    const title = document.getElementById('placeTitle');
+    const image = document.getElementById('placeImage');
+    const desc = document.getElementById('placeDescription');
+    const extraInfo = document.getElementById('extraInfo');
+    const closeBtn = document.getElementById('closeSidebar');
+
+    function openSidebar(place) {
+        title.textContent = place.name;
+        image.src = place.image;
+        desc.textContent = place.description;
+
+        // Очищаем старые блоки
+        extraInfo.innerHTML = "";
+
+        // Галерея
+        if (place.gallery && place.gallery.length > 0) {
+            const galleryDiv = document.createElement('div');
+            galleryDiv.className = 'extra-block';
+            galleryDiv.innerHTML = "<h3>Фото</h3>";
+
+            const galleryGrid = document.createElement('div');
+            galleryGrid.className = 'gallery';
+            place.gallery.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                galleryGrid.appendChild(img);
+            });
+            galleryDiv.appendChild(galleryGrid);
+            extraInfo.appendChild(galleryDiv);
+        }
+
+        // Дополнительные блоки
+    if (place.extras) {
+        place.extras.forEach(block => {
+            const div = document.createElement('div');
+            div.className = 'extra-block';
+            div.innerHTML = `<h3>${block.title}</h3><p>${block.text}</p>`;
+            extraInfo.appendChild(div);
+        });
+    }
+
+    sidebar.classList.add('open');
+}
+
+closeBtn.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+});
+
+// Метки
+places.forEach(place => {
+    const marker = L.marker(place.coords).addTo(map);
+
+    // При наведении показываем название
+    marker.bindTooltip(place.name, {
+        permanent: false,
+        direction: 'top',
+        offset: [0, -10]
+    });
+
+    // При клике — открываем панель
+    marker.on('click', () => openSidebar(place));
+});
+</script>
 </body>
 </html>
