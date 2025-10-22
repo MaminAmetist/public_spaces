@@ -25,3 +25,21 @@ class Places(models.Model):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+
+class PlaceImage(models.Model):
+    place = models.ForeignKey(
+        'Places',
+        on_delete=models.CASCADE,
+        related_name='images',
+        verbose_name='Локация'
+    )
+    image = models.ImageField(upload_to='places/gallery/', verbose_name='Фотография')
+    caption = models.CharField(max_length=200, blank=True, verbose_name='Подпись к фото')
+
+    def __str__(self):
+        return f'Фото для {self.place.title}'
+
+    class Meta:
+        verbose_name = 'фотография'
+        verbose_name_plural = 'Фотографии'
