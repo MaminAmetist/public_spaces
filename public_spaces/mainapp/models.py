@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.utils.html import format_html
 
 
 class Places(models.Model):
@@ -37,9 +38,16 @@ class PlaceImage(models.Model):
     image = models.ImageField(upload_to='places/gallery/', verbose_name='Фотография')
     caption = models.CharField(max_length=200, blank=True, verbose_name='Подпись к фото')
 
-    def __str__(self):
-        return f'Фото для {self.place.title}'
-
     class Meta:
         verbose_name = 'фотография'
         verbose_name_plural = 'Фотографии'
+
+    def __str__(self):
+        return f'Фото для {self.place.title}'
+
+    def image_tag(self):
+        if self.image:
+            return format_html('<img src="{}" style="width:100px; height:auto; border-radius:5px;" />', self.image.url)
+        return "(Нет изображения)"
+
+    image_tag.short_description = 'Превью'
