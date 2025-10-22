@@ -37,10 +37,12 @@ class PlaceImage(models.Model):
     )
     image = models.ImageField(upload_to='places/gallery/', verbose_name='Фотография')
     caption = models.CharField(max_length=200, blank=True, verbose_name='Подпись к фото')
+    order = models.PositiveIntegerField(default=0, null=False, db_index=True)
 
     class Meta:
         verbose_name = 'фотография'
         verbose_name_plural = 'Фотографии'
+        ordering = ['order']
 
     def __str__(self):
         return f'Фото для {self.place.title}'
