@@ -3,15 +3,23 @@ from mainapp.models import Places
 
 
 def start_view(request):
-    places = Places.objects.all()
+    places_data = []
 
-    data = []
-    for place in places:
-        data.append({
+    for place in Places.objects.all():
+        gallery = [
+            {
+                'image': request.build_absolute_uri(img.image.url),
+                'caption': img.caption
+            }
+            for img in place.images.all() if img.image
+        ]
+
+        places_data.append({
             'title': place.title,
             'description': place.description,
             'latitude': place.latitude,
             'longitude': place.longitude,
-            'image': request.build_absolute_uri(place.image.url) if place.image else None
+            'image': request.build_absolute_uri(place.image.url) if place.image else None,
+            'gallery': gallery
         })
-    return render(request, 'start.html', {'places': data})
+    return render(request, 'start.html', {'places': places_data})
