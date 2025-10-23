@@ -1,7 +1,7 @@
 from ckeditor.fields import RichTextField
 from django.db import models
-from django.utils.text import slugify
 from django.utils.html import format_html
+from django.db.models.fields.files import ImageFieldFile
 
 
 class Places(models.Model):
@@ -14,7 +14,6 @@ class Places(models.Model):
                               verbose_name='Главное фото')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    slug = models.SlugField(unique=True, blank=True)
 
     class Meta:
         db_table = 'public_spaces'
@@ -24,11 +23,6 @@ class Places(models.Model):
 
     def __str__(self):
         return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
 
 
 class PlaceImage(models.Model):
@@ -40,7 +34,6 @@ class PlaceImage(models.Model):
         verbose_name='Локация'
     )
     image = models.ImageField(upload_to='places/gallery/', verbose_name='Фотография')
-    caption = models.CharField(max_length=200, blank=True, verbose_name='Подпись к фото')
     order = models.PositiveIntegerField(default=0, null=False, db_index=True)
 
     class Meta:
@@ -52,10 +45,10 @@ class PlaceImage(models.Model):
         return f'Фото для {self.place.title}'
 
     def image_tag(self):
-        if self.image:
-            return format_html('<img src="{}" style="width:100px;'
-                               ' height:auto; border-radius:5px;" />',
-                               self.image.url)
+        image: ImageFieldFile = self.image
+        if image:
+            return format_html(f'<img src="{image.url}" style="width:100px;'
+                               f' height:auto; border-radius:5px;" />')
         return "(Нет изображения)"
 
     image_tag.short_description = 'Превью'

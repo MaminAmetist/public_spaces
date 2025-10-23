@@ -9,7 +9,6 @@ def start_view(request):
         gallery = [
             {
                 'image': request.build_absolute_uri(img.image.url),
-                'caption': img.caption
             }
             for img in place.images.all() if img.image
         ]

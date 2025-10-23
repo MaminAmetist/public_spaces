@@ -6,7 +6,7 @@ from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminBase
 class PlaceImageInline(SortableInlineAdminMixin, admin.StackedInline):
     model = PlaceImage
     extra = 1
-    fields = ('image_tag', 'image', 'caption', 'order')
+    fields = ('image_tag', 'image', 'order')
     readonly_fields = ('image_tag',)
     verbose_name = "фотография"
     verbose_name_plural = "Фотографии локации"
