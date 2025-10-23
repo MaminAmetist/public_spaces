@@ -1,14 +1,17 @@
+from ckeditor.fields import RichTextField
 from django.db import models
 from django.utils.text import slugify
 from django.utils.html import format_html
 
 
 class Places(models.Model):
+    """Создает БД мест для посещения"""
     title = models.CharField(max_length=100, verbose_name='Название')
-    description = models.TextField(verbose_name='Описание')
+    description = RichTextField(verbose_name='Описание')
     latitude = models.FloatField(verbose_name='Широта')
     longitude = models.FloatField(verbose_name='Долгота')
-    image = models.ImageField(upload_to='places/', blank=True, null=True, verbose_name='Главное фото')
+    image = models.ImageField(upload_to='places/', blank=True, null=True,
+                              verbose_name='Главное фото')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     slug = models.SlugField(unique=True, blank=True)
@@ -29,6 +32,7 @@ class Places(models.Model):
 
 
 class PlaceImage(models.Model):
+    """Создает БД галереи"""
     place = models.ForeignKey(
         'Places',
         on_delete=models.CASCADE,
@@ -49,7 +53,9 @@ class PlaceImage(models.Model):
 
     def image_tag(self):
         if self.image:
-            return format_html('<img src="{}" style="width:100px; height:auto; border-radius:5px;" />', self.image.url)
+            return format_html('<img src="{}" style="width:100px;'
+                               ' height:auto; border-radius:5px;" />',
+                               self.image.url)
         return "(Нет изображения)"
 
     image_tag.short_description = 'Превью'
