@@ -88,7 +88,7 @@ pip install -r requirements.txt
 ```
 ## Использование
 
-Админка: https://maminametist.pythonanywhere.com//admin/
+Админка: https://maminametist.pythonanywhere.com/admin/
 
 Добавление и редактирование мест, загрузка галерей.
 
@@ -98,6 +98,6 @@ Drag-and-drop для сортировки фотографий.
 
 Интерактивная карта с местами и сайдбаром.
 
-API: https://maminametist.pythonanywhere.com/<id>/
+API: https://maminametist.pythonanywhere.com/places/<id>/ 
 
 Возвращает JSON с данными о месте.
