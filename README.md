@@ -65,8 +65,7 @@ pip install -r requirements.txt
 ```bash
     SECRET_KEY=your-secret-key
     DEBUG=True
-    ALLOWED_HOSTS=127.0.0.1,localhost
-    STATIC_ROOT=C:\path\to\static
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'yourusername.pythonanywhere.com']
     MEDIA_ROOT=C:\path\to\media
 ```
 
@@ -89,16 +88,16 @@ pip install -r requirements.txt
 ```
 ## Использование
 
-Админка: http://127.0.0.1:8000/admin/
+Админка: https://maminametist.pythonanywhere.com//admin/
 
 Добавление и редактирование мест, загрузка галерей.
 
 Drag-and-drop для сортировки фотографий.
 
-Главная страница: http://127.0.0.1:8000/
+Главная страница: https://maminametist.pythonanywhere.com/
 
 Интерактивная карта с местами и сайдбаром.
 
-API: http://127.0.0.1:8000/places/<id>/
+API: https://maminametist.pythonanywhere.com/<id>/
 
 Возвращает JSON с данными о месте.
