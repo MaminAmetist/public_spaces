@@ -81,10 +81,10 @@ pip install -r requirements.txt
   python manage.py createsuperuser
 ```
 
-Запустить сервер:
+Запустить настройки static файлов:
 
 ```bash
-  python manage.py runserver
+  python manage.py collectstatic
 ```
 ## Использование
 
