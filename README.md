@@ -98,6 +98,6 @@ Drag-and-drop для сортировки фотографий.
 
 Интерактивная карта с местами и сайдбаром.
 
-API: https://maminametist.pythonanywhere.com/places/<id>/ 
+API: https://maminametist.pythonanywhere.com/places/id/ 
 
 Возвращает JSON с данными о месте.
